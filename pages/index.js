@@ -28,17 +28,23 @@ export default function Home({ coffeStores }) {
           width={700}
           height={400}
         />
-        <div className={styles.cardLayout}>
-          {coffeStores.map((coffeStore) => (
-            <Card
-              key={coffeStore.id}
-              name={coffeStore.name}
-              imgUrl={coffeStore.imgUrl}
-              href={`/coffee-store/${coffeStore.id}`}
-              className={styles.card}
-            />
-          ))}
-        </div>
+
+        {coffeStores.length > 0 && (
+          <>
+            <h2 className={styles.heading2}>Toronto stores</h2>
+            <div className={styles.cardLayout}>
+              {coffeStores.map((coffeStore) => (
+                <Card
+                  key={coffeStore.id}
+                  name={coffeStore.name}
+                  imgUrl={coffeStore.imgUrl}
+                  href={`/coffee-store/${coffeStore.id}`}
+                  className={styles.card}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </main>
     </>
   );
