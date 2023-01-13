@@ -5,7 +5,7 @@ import Card from "../components/card";
 import coffeStores from "../data/coffee-stores.json";
 import styles from "../styles/Home.module.css";
 
-export default function Home() {
+export default function Home({ coffeStores }) {
   const handleOnBannerClick = () => {
     console.log("Hi banner button");
   };
@@ -43,3 +43,9 @@ export default function Home() {
     </>
   );
 }
+
+export const getStaticProps = async () => {
+  return {
+    props: { coffeStores },
+  };
+};
