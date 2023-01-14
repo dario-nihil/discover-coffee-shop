@@ -6,12 +6,22 @@ import { fetchCoffeStore } from "../lib/coffee-store";
 import useTrackLocation from "../hooks/use-track-location";
 
 import styles from "../styles/Home.module.css";
+import { useEffect } from "react";
 
 export default function Home({ coffeeStores }) {
   const { handleTrackLocation, latLng, locationErrorMsg, isFindingLocation } =
     useTrackLocation();
 
   console.log({ latLng, locationErrorMsg });
+
+  useEffect(() => {
+    (async function setCoffeeStoresByLocation() {
+      try {
+        const fetchedCoffeStores = await fetchCoffeStore(latLng, 30);
+        console.log({ fetchedCoffeStores });
+      } catch (error) {}
+    })();
+  }, [latLng]);
 
   const handleOnBannerClick = () => {
     console.log("Hi banner button");
