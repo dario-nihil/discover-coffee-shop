@@ -7,7 +7,9 @@ import { fetchCoffeStore } from "../../lib/coffee-store";
 
 import styles from "../../styles/coffe-stores.module.css";
 
-const CoffeeStore = ({ coffeeStore: { location, name, imgUrl } }) => {
+const CoffeeStore = ({
+  coffeeStore: { name, address, neighborhood, imgUrl },
+}) => {
   const router = useRouter();
 
   if (router.isFallback) {
@@ -43,24 +45,28 @@ const CoffeeStore = ({ coffeeStore: { location, name, imgUrl } }) => {
           />
         </div>
         <div className={cls("glass", styles.col2)}>
-          <div className={styles.iconWrapper}>
-            <Image
-              src="/static/icons/places.svg"
-              alt=""
-              width="24"
-              height="24"
-            />
-            <p className={styles.text}>{location.address}</p>
-          </div>
-          <div className={styles.iconWrapper}>
-            <Image
-              src="/static/icons/nearMe.svg"
-              alt=""
-              width="24"
-              height="24"
-            />
-            <p className={styles.text}>{location.neighborhood[0]}</p>
-          </div>
+          {address && (
+            <div className={styles.iconWrapper}>
+              <Image
+                src="/static/icons/places.svg"
+                alt=""
+                width="24"
+                height="24"
+              />
+              <p className={styles.text}>{address}</p>
+            </div>
+          )}
+          {neighborhood && (
+            <div className={styles.iconWrapper}>
+              <Image
+                src="/static/icons/nearMe.svg"
+                alt=""
+                width="24"
+                height="24"
+              />
+              <p className={styles.text}>{neighborhood}</p>
+            </div>
+          )}
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/star.svg" alt="" width="24" height="24" />
             <p className={styles.text}>1</p>
@@ -81,7 +87,7 @@ export const getStaticProps = async (context) => {
   return {
     props: {
       coffeeStore: coffeeStores.find(
-        (coffeeStore) => coffeeStore.fsq_id === params.id
+        (coffeeStore) => coffeeStore.id === params.id
       ),
     },
   };
@@ -91,7 +97,7 @@ export const getStaticPaths = async () => {
   const coffeeStores = await fetchCoffeStore();
 
   const paths = coffeeStores.map((coffeeStore) => ({
-    params: { id: coffeeStore.fsq_id.toString() },
+    params: { id: coffeeStore.id.toString() },
   }));
 
   return {
