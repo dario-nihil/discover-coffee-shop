@@ -1,16 +1,13 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import cls from "classnames";
+import { fetchCoffeStore } from "../../lib/coffee-store";
 
 import styles from "../../styles/coffe-stores.module.css";
 
-import coffeStores from "../../data/coffee-stores.json";
-import Image from "next/image";
-
-const CoffeeStore = ({
-  coffeStore: { address, name, neighbourhood, imgUrl },
-}) => {
+const CoffeeStore = ({ coffeeStore: { location, name, imgUrl } }) => {
   const router = useRouter();
 
   if (router.isFallback) {
@@ -36,7 +33,10 @@ const CoffeeStore = ({
           </div>
           <Image
             className={styles.storeImg}
-            src={imgUrl}
+            src={
+              imgUrl ||
+              "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
+            }
             alt={name}
             width={600}
             height={360}
@@ -50,7 +50,7 @@ const CoffeeStore = ({
               width="24"
               height="24"
             />
-            <p className={styles.text}>{address}</p>
+            <p className={styles.text}>{location.address}</p>
           </div>
           <div className={styles.iconWrapper}>
             <Image
@@ -59,7 +59,7 @@ const CoffeeStore = ({
               width="24"
               height="24"
             />
-            <p className={styles.text}>{neighbourhood}</p>
+            <p className={styles.text}>{location.neighborhood[0]}</p>
           </div>
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/star.svg" alt="" width="24" height="24" />
@@ -74,21 +74,24 @@ const CoffeeStore = ({
   );
 };
 
-export const getStaticProps = (context) => {
+export const getStaticProps = async (context) => {
   const { params } = context;
+  const coffeeStores = await fetchCoffeStore();
 
   return {
     props: {
-      coffeStore: coffeStores.find(
-        (coffeeStore) => coffeeStore.id === +params.id
+      coffeeStore: coffeeStores.find(
+        (coffeeStore) => coffeeStore.fsq_id === params.id
       ),
     },
   };
 };
 
-export const getStaticPaths = () => {
-  const paths = coffeStores.map((coffeStore) => ({
-    params: { id: coffeStore.id.toString() },
+export const getStaticPaths = async () => {
+  const coffeeStores = await fetchCoffeStore();
+
+  const paths = coffeeStores.map((coffeeStore) => ({
+    params: { id: coffeeStore.fsq_id.toString() },
   }));
 
   return {
