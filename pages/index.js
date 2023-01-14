@@ -6,25 +6,26 @@ import { fetchCoffeStore } from "../lib/coffee-store";
 import useTrackLocation from "../hooks/use-track-location";
 
 import styles from "../styles/Home.module.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export default function Home({ coffeeStores }) {
+export default function Home() {
   const { handleTrackLocation, latLng, locationErrorMsg, isFindingLocation } =
     useTrackLocation();
-
-  console.log({ latLng, locationErrorMsg });
+  const [coffeeStores, setCoffeeStores] = useState([]);
+  const [coffeeStoresError, setCoffeeStoresError] = useState(null);
 
   useEffect(() => {
     (async function setCoffeeStoresByLocation() {
       try {
         const fetchedCoffeStores = await fetchCoffeStore(latLng, 30);
-        console.log({ fetchedCoffeStores });
-      } catch (error) {}
+        setCoffeeStores(fetchedCoffeStores);
+      } catch (error) {
+        setCoffeeStoresError(error.message);
+      }
     })();
   }, [latLng]);
 
   const handleOnBannerClick = () => {
-    console.log("Hi banner button");
     handleTrackLocation();
   };
 
@@ -40,6 +41,9 @@ export default function Home({ coffeeStores }) {
           handleOnClick={handleOnBannerClick}
         />
         {locationErrorMsg && <p>`Something went wrong: {locationErrorMsg}`</p>}
+        {coffeeStoresError && (
+          <p>`Something went wrong: {coffeeStoresError}`</p>
+        )}
         <Image
           className={styles.heroImage}
           src="/static/hero-image.png"
@@ -50,7 +54,7 @@ export default function Home({ coffeeStores }) {
 
         {coffeeStores.length > 0 && (
           <div className={styles.sectionWrapper}>
-            <h2 className={styles.heading2}>Toronto stores</h2>
+            <h2 className={styles.heading2}>Stores near me</h2>
             <div className={styles.cardLayout}>
               {coffeeStores.map((coffeeStore) => (
                 <Card
