@@ -8,10 +8,10 @@ import useTrackLocation from "../hooks/use-track-location";
 import styles from "../styles/Home.module.css";
 import { useEffect, useState } from "react";
 
-export default function Home() {
+export default function Home(props) {
   const { handleTrackLocation, latLng, locationErrorMsg, isFindingLocation } =
     useTrackLocation();
-  const [coffeeStores, setCoffeeStores] = useState([]);
+  const [coffeeStores, setCoffeeStores] = useState(props.coffeeStores);
   const [coffeeStoresError, setCoffeeStoresError] = useState(null);
 
   useEffect(() => {

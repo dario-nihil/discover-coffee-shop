@@ -84,11 +84,17 @@ export const getStaticProps = async (context) => {
   const { params } = context;
   const coffeeStores = await fetchCoffeStore();
 
+  const findCoffeeStoreById = coffeeStores.find(
+    (coffeeStore) => coffeeStore.id === params.id
+  );
+
   return {
     props: {
-      coffeeStore: coffeeStores.find(
-        (coffeeStore) => coffeeStore.id === params.id
-      ),
+      coffeeStore: findCoffeeStoreById ?? {
+        name: "",
+        address: "",
+        neighborhood: "",
+      },
     },
   };
 };
