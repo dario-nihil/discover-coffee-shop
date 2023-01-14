@@ -3,12 +3,19 @@ import Image from "next/image";
 import Banner from "../components/banner";
 import Card from "../components/card";
 import { fetchCoffeStore } from "../lib/coffee-store";
+import useTrackLocation from "../hooks/use-track-location";
 
 import styles from "../styles/Home.module.css";
 
 export default function Home({ coffeeStores }) {
+  const { handleTrackLocation, latLng, locationErrorMsg, isFindingLocation } =
+    useTrackLocation();
+
+  console.log({ latLng, locationErrorMsg });
+
   const handleOnBannerClick = () => {
     console.log("Hi banner button");
+    handleTrackLocation();
   };
 
   return (
@@ -19,9 +26,10 @@ export default function Home({ coffeeStores }) {
       </Head>
       <main className={styles.main}>
         <Banner
-          buttonText="View stores nearby"
+          buttonText={isFindingLocation ? "Locating..." : "View stores nearby"}
           handleOnClick={handleOnBannerClick}
         />
+        {locationErrorMsg && <p>`Something went wrong: {locationErrorMsg}`</p>}
         <Image
           className={styles.heroImage}
           src="/static/hero-image.png"
@@ -31,7 +39,7 @@ export default function Home({ coffeeStores }) {
         />
 
         {coffeeStores.length > 0 && (
-          <>
+          <div className={styles.sectionWrapper}>
             <h2 className={styles.heading2}>Toronto stores</h2>
             <div className={styles.cardLayout}>
               {coffeeStores.map((coffeeStore) => (
@@ -47,7 +55,7 @@ export default function Home({ coffeeStores }) {
                 />
               ))}
             </div>
-          </>
+          </div>
         )}
       </main>
     </div>
