@@ -2,10 +2,11 @@ import Head from "next/head";
 import Image from "next/image";
 import Banner from "../components/banner";
 import Card from "../components/card";
+import { fetchCoffeStore } from "../lib/coffee-store";
 
 import styles from "../styles/Home.module.css";
 
-export default function Home({ coffeStores }) {
+export default function Home({ coffeeStores }) {
   const handleOnBannerClick = () => {
     console.log("Hi banner button");
   };
@@ -29,19 +30,19 @@ export default function Home({ coffeStores }) {
           height={400}
         />
 
-        {coffeStores.length > 0 && (
+        {coffeeStores.length > 0 && (
           <>
             <h2 className={styles.heading2}>Toronto stores</h2>
             <div className={styles.cardLayout}>
-              {coffeStores.map((coffeStore) => (
+              {coffeeStores.map((coffeeStore) => (
                 <Card
-                  key={coffeStore.fsq_id}
-                  name={coffeStore.name}
+                  key={coffeeStore.fsq_id}
+                  name={coffeeStore.name}
                   imgUrl={
-                    coffeStore.imgUrl ||
+                    coffeeStore.imgUrl ||
                     "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
                   }
-                  href={`/coffee-store/${coffeStore.id}`}
+                  href={`/coffee-store/${coffeeStore.id}`}
                   className={styles.card}
                 />
               ))}
@@ -54,22 +55,9 @@ export default function Home({ coffeStores }) {
 }
 
 export const getStaticProps = async () => {
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization: process.env.FOURSQUARE_API_KEY,
-    },
-  };
-
-  const response = await fetch(
-    "https://api.foursquare.com/v3/places/search?query=coffee&ll=43.64969895162279%2C-79.37632948459212&limit=6",
-    options
-  );
-
-  const data = await response.json();
+  const coffeeStores = await fetchCoffeStore();
 
   return {
-    props: { coffeStores: data.results },
+    props: { coffeeStores },
   };
 };
