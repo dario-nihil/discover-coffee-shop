@@ -3,14 +3,34 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import cls from "classnames";
+import { useContext, useState, useEffect } from "react";
+import { StoreContext } from "../../store/store-context";
+
+import { isEmpty } from "../../utils";
 import { fetchCoffeStore } from "../../lib/coffee-store";
 
 import styles from "../../styles/coffe-stores.module.css";
 
-const CoffeeStore = ({
-  coffeeStore: { name, address, neighborhood, imgUrl },
-}) => {
+const CoffeeStore = ({ initialCoffeeStore }) => {
   const router = useRouter();
+  const [coffeeStore, setCoffeeStore] = useState(initialCoffeeStore);
+  const id = router.query.id;
+
+  const {
+    state: { coffeeStores },
+  } = useContext(StoreContext);
+
+  useEffect(() => {
+    if (isEmpty(initialCoffeeStore) && coffeeStores.length > 0) {
+      const findCoffeeStoreById = coffeeStores.find(
+        (coffeeStore) => coffeeStore.id === id
+      );
+
+      setCoffeeStore(findCoffeeStoreById);
+    }
+  }, [coffeeStores, id, initialCoffeeStore]);
+
+  const { name, address, neighborhood, imgUrl } = coffeeStore;
 
   if (router.isFallback) {
     return <p>Loading...</p>;
@@ -90,7 +110,7 @@ export const getStaticProps = async (context) => {
 
   return {
     props: {
-      coffeeStore: findCoffeeStoreById ?? {
+      initialCoffeeStore: findCoffeeStoreById ?? {
         name: "",
         address: "",
         neighborhood: "",

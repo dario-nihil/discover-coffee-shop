@@ -2,7 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useState, useContext } from "react";
 
-import { StoreContext, ACTION_TYPES } from "./_app";
+import { StoreContext, ACTION_TYPES } from "../store/store-context";
 import Banner from "../components/banner";
 import Card from "../components/card";
 import { fetchCoffeStore } from "../lib/coffee-store";
@@ -25,6 +25,8 @@ export default function Home(props) {
       try {
         const fetchedCoffeStores = await fetchCoffeStore(latLng, 30);
         // setCoffeeStores(fetchedCoffeStores);
+        console.log("inside Home useEffect");
+        console.log({ fetchedCoffeStores });
         dispatch({
           type: ACTION_TYPES.SET_COFFEE_STORES,
           payload: { coffeeStores: fetchedCoffeStores },
@@ -33,7 +35,7 @@ export default function Home(props) {
         setCoffeeStoresError(error.message);
       }
     })();
-  }, [latLng]);
+  }, [latLng, dispatch]);
 
   const handleOnBannerClick = () => {
     handleTrackLocation();
