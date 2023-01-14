@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+
+import { ACTION_TYPES, StoreContext } from "../pages/_app";
 
 const useTrackLocation = () => {
   const [locationErrorMsg, setLocationErrorMsg] = useState("");
-  const [latLng, setLatLng] = useState("");
+  //   const [latLng, setLatLng] = useState("");
   const [isFindingLocation, setIsFindingLocation] = useState(false);
+  const { dispatch } = useContext(StoreContext);
 
   const error = () => {
     setLocationErrorMsg("Unable to retrieve youe location");
@@ -14,7 +17,11 @@ const useTrackLocation = () => {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
 
-    setLatLng(`${latitude},${longitude}`);
+    // setLatLng(`${latitude},${longitude}`);
+    dispatch({
+      type: ACTION_TYPES.SET_LAT_LNG,
+      payload: { latLng: `${latitude},${longitude}` },
+    });
     setLocationErrorMsg("");
     setIsFindingLocation(false);
   };
@@ -30,7 +37,8 @@ const useTrackLocation = () => {
     }
   };
 
-  return { latLng, locationErrorMsg, handleTrackLocation, isFindingLocation };
+  //return { latLng, locationErrorMsg, handleTrackLocation, isFindingLocation };
+  return { locationErrorMsg, handleTrackLocation, isFindingLocation };
 };
 
 export default useTrackLocation;
