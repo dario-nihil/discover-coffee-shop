@@ -29,8 +29,6 @@ export default function Home(props) {
           );
           const fetchedCoffeStores = await response.json();
 
-          console.log("inside Home useEffect");
-          console.log({ fetchedCoffeStores });
           dispatch({
             type: ACTION_TYPES.SET_COFFEE_STORES,
             payload: { coffeeStores: fetchedCoffeStores },
