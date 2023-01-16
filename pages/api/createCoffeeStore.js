@@ -8,10 +8,12 @@ const table = base("coffee-stores");
 
 export const handler = async (req, res) => {
   if (req.method === "POST") {
+    const { id, name, neighbourhood, address, imgUrl, voting } = req.body;
+
     try {
       const findCoffeeStoreRecords = await table
         .select({
-          filterByFormula: "id = '0'",
+          filterByFormula: `id = '${id}'`,
         })
         .firstPage();
 
@@ -19,10 +21,22 @@ export const handler = async (req, res) => {
         const records = findCoffeeStoreRecords.map((record) => ({
           ...record.fields,
         }));
-        console.log(records);
-        res.json({ records });
+        res.json({ message: "Return existing record", records });
       } else {
-        res.json({ message: "create a record" });
+        const createRecord = await table.create([
+          {
+            fields: {
+              id,
+              name,
+              address,
+              neighbourhood,
+              voting,
+              imgUrl,
+            },
+          },
+        ]);
+        const records = createRecord.map((record) => ({ ...record.fields }));
+        res.json({ message: "create a record", records });
       }
     } catch (error) {
       console.log("Error finding store", error);
