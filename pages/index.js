@@ -22,17 +22,24 @@ export default function Home(props) {
 
   useEffect(() => {
     (async function setCoffeeStoresByLocation() {
-      try {
-        const fetchedCoffeStores = await fetchCoffeStore(latLng, 30);
-        // setCoffeeStores(fetchedCoffeStores);
-        console.log("inside Home useEffect");
-        console.log({ fetchedCoffeStores });
-        dispatch({
-          type: ACTION_TYPES.SET_COFFEE_STORES,
-          payload: { coffeeStores: fetchedCoffeStores },
-        });
-      } catch (error) {
-        setCoffeeStoresError(error.message);
+      if (latLng) {
+        try {
+          const response = await fetch(
+            `/api/getCoffeeStoresByLocation?latLng=${latLng}&limit=30`
+          );
+          const fetchedCoffeStores = await response.json();
+
+          console.log("inside Home useEffect");
+          console.log({ fetchedCoffeStores });
+          dispatch({
+            type: ACTION_TYPES.SET_COFFEE_STORES,
+            payload: { coffeeStores: fetchedCoffeStores },
+          });
+
+          setCoffeeStoresError("");
+        } catch (error) {
+          setCoffeeStoresError(error.message);
+        }
       }
     })();
   }, [latLng, dispatch]);
