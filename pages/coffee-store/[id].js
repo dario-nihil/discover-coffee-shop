@@ -12,11 +12,15 @@ import { fetchCoffeStore } from "../../lib/coffee-store";
 
 import styles from "../../styles/coffe-stores.module.css";
 
-const CoffeeStore = ({ initialCoffeeStore }) => {
+const CoffeeStore = ({
+  initialCoffeeStore = { name: "", address: "", neighborhood: "", imgUrl: "" },
+}) => {
   const router = useRouter();
   const [coffeeStore, setCoffeeStore] = useState(initialCoffeeStore);
   const [votingCount, setVotingCount] = useState(0);
   const id = router.query.id;
+
+  const { name, address, neighborhood, imgUrl } = initialCoffeeStore;
 
   const {
     state: { coffeeStores },
@@ -28,7 +32,7 @@ const CoffeeStore = ({ initialCoffeeStore }) => {
 
   const handleCreateCoffeeStore = async (coffeStore) => {
     try {
-      const { id, name, address, neighborhood, imgUrl, voting } = coffeStore;
+      const { id, name, address, neighborhood, imgUrl } = coffeStore;
 
       const response = await fetch("/api/createCoffeeStore", {
         method: "POST",
@@ -79,8 +83,6 @@ const CoffeeStore = ({ initialCoffeeStore }) => {
     return <div>Something went wrong retrieving coffee store page</div>;
   }
 
-  const { name, address, neighborhood, imgUrl } = coffeeStore;
-
   if (router.isFallback) {
     return <p>Loading...</p>;
   }
@@ -122,6 +124,7 @@ const CoffeeStore = ({ initialCoffeeStore }) => {
           </div>
           <Image
             className={styles.storeImg}
+            priority={true}
             src={
               imgUrl ||
               "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
@@ -177,11 +180,14 @@ export const getStaticProps = async (context) => {
 
   return {
     props: {
-      initialCoffeeStore: findCoffeeStoreById ?? {
-        name: "",
-        address: "",
-        neighborhood: "",
-      },
+      initialCoffeeStore: findCoffeeStoreById
+        ? findCoffeeStoreById
+        : {
+            name: "",
+            address: "",
+            neighborhood: "",
+            imgUrl: "",
+          },
     },
   };
 };

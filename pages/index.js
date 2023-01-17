@@ -63,6 +63,7 @@ export default function Home(props) {
         )}
         <Image
           className={styles.heroImage}
+          priority="true"
           src="/static/hero-image.png"
           alt="A lady with a cup of coffee"
           width={700}
