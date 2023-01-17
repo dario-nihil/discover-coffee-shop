@@ -14,9 +14,8 @@ import styles from "../../styles/coffe-stores.module.css";
 const CoffeeStore = ({ initialCoffeeStore }) => {
   const router = useRouter();
   const [coffeeStore, setCoffeeStore] = useState(initialCoffeeStore);
+  const [votingCount, setVotingCount] = useState(0);
   const id = router.query.id;
-
-  console.log({ initialCoffeeStore });
 
   const {
     state: { coffeeStores },
@@ -71,6 +70,7 @@ const CoffeeStore = ({ initialCoffeeStore }) => {
   }
 
   const handleUpvoteButton = () => {
+    setVotingCount((count) => count + 1);
     console.log("handle upvote");
   };
 
@@ -123,7 +123,7 @@ const CoffeeStore = ({ initialCoffeeStore }) => {
           )}
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/star.svg" alt="" width="24" height="24" />
-            <p className={styles.text}>1</p>
+            <p className={styles.text}>{votingCount}</p>
           </div>
           <button className={styles.upvoteButton} onClick={handleUpvoteButton}>
             Up vote!
