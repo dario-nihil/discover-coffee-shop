@@ -5,6 +5,7 @@ import Image from "next/image";
 import cls from "classnames";
 import { useContext, useState, useEffect } from "react";
 import { StoreContext } from "../../store/store-context";
+import useSWR from "swr";
 
 import { isEmpty } from "../../utils";
 import { fetchCoffeStore } from "../../lib/coffee-store";
@@ -20,6 +21,10 @@ const CoffeeStore = ({ initialCoffeeStore }) => {
   const {
     state: { coffeeStores },
   } = useContext(StoreContext);
+
+  const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, (url) =>
+    fetch(url).then((res) => res.json())
+  );
 
   const handleCreateCoffeeStore = async (coffeStore) => {
     try {
@@ -62,6 +67,18 @@ const CoffeeStore = ({ initialCoffeeStore }) => {
       handleCreateCoffeeStore(selectedCoffeeStore);
     }
   }, [coffeeStores, id, initialCoffeeStore]);
+
+  useEffect(() => {
+    if (data && data.records.length > 0) {
+      console.log("data from SWR");
+      setCoffeeStore(data.records[0]);
+      setVotingCount(data.records[0].voting);
+    }
+  }, [data]);
+
+  if (error) {
+    return <div>Something went wrong retrieving coffee store page</div>;
+  }
 
   const { name, address, neighborhood, imgUrl } = coffeeStore;
 
