@@ -86,9 +86,30 @@ const CoffeeStore = ({ initialCoffeeStore }) => {
     return <p>Loading...</p>;
   }
 
-  const handleUpvoteButton = () => {
-    setVotingCount((count) => count + 1);
+  const handleUpvoteButton = async () => {
     console.log("handle upvote");
+
+    try {
+      const response = await fetch("/api/favouriteCoffeeStoreById", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+        }),
+      });
+
+      const dbCoffeeStore = await response.json();
+
+      console.log(dbCoffeeStore);
+      if (dbCoffeeStore && dbCoffeeStore.record.length > 0) {
+        setVotingCount((count) => count + 1);
+        console.log(dbCoffeeStore);
+      }
+    } catch (error) {
+      console.error("Error upvoting coffee store", error);
+    }
   };
 
   return (
