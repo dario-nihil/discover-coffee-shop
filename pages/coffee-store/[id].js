@@ -69,8 +69,7 @@ const CoffeeStore = ({ initialCoffeeStore }) => {
   }, [coffeeStores, id, initialCoffeeStore]);
 
   useEffect(() => {
-    if (data && data.records.length > 0) {
-      console.log("data from SWR");
+    if (data && data.records && data.records.length > 0) {
       setCoffeeStore(data.records[0]);
       setVotingCount(data.records[0].voting);
     }
@@ -87,8 +86,6 @@ const CoffeeStore = ({ initialCoffeeStore }) => {
   }
 
   const handleUpvoteButton = async () => {
-    console.log("handle upvote");
-
     try {
       const response = await fetch("/api/favouriteCoffeeStoreById", {
         method: "PUT",
@@ -102,10 +99,8 @@ const CoffeeStore = ({ initialCoffeeStore }) => {
 
       const dbCoffeeStore = await response.json();
 
-      console.log(dbCoffeeStore);
       if (dbCoffeeStore && dbCoffeeStore.record.length > 0) {
         setVotingCount((count) => count + 1);
-        console.log(dbCoffeeStore);
       }
     } catch (error) {
       console.error("Error upvoting coffee store", error);
